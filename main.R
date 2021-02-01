@@ -6,6 +6,8 @@ setwd('~/OneDrive - Data ScienceTech Institute/Datasets/startup/')
 
 # Loading the required libraries
 library(dplyr)
+library(tidyr)
+library(ggplot2)
 
 # Loading the data sets
 data = read.csv('50_Startups.csv')
@@ -16,10 +18,18 @@ attach(data)
 # Data pre-analysis
 summary(data)
 sapply(data, class)
-sapply(data, sum(is.na(data)))
 data$State <- as.factor(data$State)
+# Checking for NAs
+lapply(data, is.na)
+
+# Summarize information
+data %>% group_by(State) %>%
+  summarize(Avg_RD = mean(R.D.Spend), Avg_Admin = mean(Administration),
+            Avg_Mark = mean(Marketing.Spend), Avg_Profit = mean(Profit))
 
 # Plotting
+plot(Profit, R.D.Spend)
+
 
 
 
