@@ -31,6 +31,12 @@ data %>% group_by(State) %>%
 plot(Profit, R.D.Spend)
 
 
+ggplot(data, aes(x=State, y=Profit, fill=State)) + 
+  geom_boxplot(alpha=0.3) +
+  theme(legend.position="none")
+title('Boxplot Profit ~ State')
+
+
 
 
 
