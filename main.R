@@ -27,24 +27,31 @@ data %>% group_by(State) %>%
   summarize(Avg_RD = mean(R.D.Spend), Avg_Admin = mean(Administration),
             Avg_Mark = mean(Marketing.Spend), Avg_Profit = mean(Profit))
 
-# Plotting
-plot(Profit, R.D.Spend)
-
-
+# Boxplot: Profit ~ State
 ggplot(data, aes(x=State, y=Profit, fill=State)) + 
-  geom_boxplot(alpha=0.3) +
-  theme(legend.position="none")
-title('Boxplot Profit ~ State')
+  geom_boxplot(alpha=0.5) +
+  theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$", suffix = "K")) +
+  ggtitle('Boxplot: Profit ~ State') + theme(plot.title = element_text(hjust = 0.5))
 
-
-
-
-
+# Plotting 
+df <- gather(data, key = Department, value = Budget, c("R.D.Spend","Marketing.Spend","Administration"))
+ggplot(df, aes(x=Budget, y=Profit, group = Department, color = Department)) + geom_point() +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$", suffix = "K")) +
+  scale_x_continuous(labels = scales::dollar_format(prefix="$", suffix = "K")) +
+  ggtitle('Profit vs RD - Marketing - Administration') + 
+    theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+    legend.position = c(.84, .16),
+    legend.justification = c("left", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6)
+  )
+      
 
 
 
 model = lm(Profit ~ R.D.Spend + Marketing.Spend + Administration + State)
-boxplot(Profit~State)
 summary(model)=
 anova(model)
 plot(model)
