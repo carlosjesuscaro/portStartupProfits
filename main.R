@@ -8,6 +8,7 @@ setwd('~/OneDrive - Data ScienceTech Institute/Datasets/startup/')
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(ggcorrplot)
 
 # Loading the data sets
 data = read.csv('50_Startups.csv')
@@ -47,8 +48,10 @@ ggplot(df, aes(x=Budget, y=Profit, group = Department, color = Department)) + ge
     legend.box.just = "right",
     legend.margin = margin(6, 6, 6, 6)
   )
-      
 
+# Heatmap and correlation analysis among all quantitative variables
+data_corr <- cor(data %>% select(-State))      
+ggcorrplot(data_corr, type = "lower")
 
 
 model = lm(Profit ~ R.D.Spend + Marketing.Spend + Administration + State)
