@@ -21,7 +21,7 @@ summary(data)
 sapply(data, class)
 data$State <- as.factor(data$State)
 # Checking for NAs
-lapply(data, is.na)
+sum(is.na(data))
 
 # Summarize information
 data %>% group_by(State) %>%
@@ -51,13 +51,36 @@ ggplot(df, aes(x=Budget, y=Profit, group = Department, color = Department)) + ge
 
 # Heatmap and correlation analysis among all quantitative variables
 data_corr <- cor(data %>% select(-State))      
-ggcorrplot(data_corr, type = "lower")
+ggcorrplot(data_corr, type = "lower") + ggtitle('Correlation among variables')
 
-
-model = lm(Profit ~ R.D.Spend + Marketing.Spend + Administration + State)
-summary(model)=
+# Modeling
+model = lm(Profit ~ R.D.Spend + Marketing.Spend + Administration  + State)
+summary(model)
 anova(model)
-plot(model)
-plot(Profit ~ R.D.Spend)
+
+# Verifying the pre-conditions
+hist(model$residuals, freq = FALSE)
 shapiro.test(model$residuals)
-bartlett.test(Profit, State)
+plot(model)
+
+# Plotting real vs predicted
+Predicted <- model$fitted.values
+data <- cbind(data, Predicted)
+data <- data %>% rename(Real = Profit)
+
+df <- gather(data, key = Value, value = Startup_Profit, c("Real","Predicted"))
+ggplot(df, aes(x=R.D.Spend, y=Startup_Profit, group = Value, color = Value)) + geom_point() +
+  scale_y_continuous(labels = scales::dollar_format(prefix="$", suffix = "K")) +
+  scale_x_continuous(labels = scales::dollar_format(prefix="$", suffix = "K")) +
+  ggtitle('Profit: Real vs Predicted') + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(
+    legend.position = c(.84, .16),
+    legend.justification = c("left", "top"),
+    legend.box.just = "right",
+    legend.margin = margin(6, 6, 6, 6)
+  )
+
+
+
+
