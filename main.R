@@ -9,6 +9,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(ggcorrplot)
+library(lmtest)
 
 # Loading the data sets
 data = read.csv('50_Startups.csv')
@@ -64,6 +65,7 @@ shapiro.test(model$residuals)
 plot(model)
 
 # Plotting real vs predicted
+data_caret <- data # To be used with the caret library
 Predicted <- model$fitted.values
 data <- cbind(data, Predicted)
 data <- data %>% rename(Real = Profit)
@@ -81,6 +83,7 @@ ggplot(df, aes(x=R.D.Spend, y=Startup_Profit, group = Value, color = Value)) + g
     legend.margin = margin(6, 6, 6, 6)
   )
 
-
-
+# Using the caret library
+lm1 <- train(Profit~., data = data_caret, method="lm")
+lm1$results$Rsquared
 
